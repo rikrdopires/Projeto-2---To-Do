@@ -1,11 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylesheet" href="styles.css">
+    <title>Lista de Tarefas</title>
 </head>
 <body>
-    <h1>Hello, World!</h1>
+    <main class="app">
+
+        <header class="app_header">
+           <h1>Lista de Tarefas</h1>
+           <p class="app_subtitle">Organize seu dia, uma tarefa de cada vez.</p>
+        </header>
+
+        <form class="task-form" id="task-form">
+            <label for="task-input" class="sr-only">Nova Tarefa</label>
+            <input type="text" id="task-input" class="task-form_input" 
+            placeholder="Digite uma nova tarefa"
+            autocomplete="off" required />
+            <button type="submit" class="task-form_button">Adicionar</button>
+        </form>
+
+        <nav class="filters" aria-label="Filtrar tarefas">
+            <button class="filters_btn is-active" data-filter="all">Todas</button>
+            <button class="filters_btn" data-filter="active">Ativas</button>
+            <button class="filters_btn" data-filter="completed">Concluídas</button>
+        </nav>
+
+        <ul class="task-list" id="task-list">
+            <!-- As tarefas serão adicionadas aqui dinamicamente -->
+        </ul>
+    </main>
+
+    <footer class="app__footer">
+        <span id="task-counter">0 tarefas pendentes</span>
+        <button id="clear-completed" class="app__clear">Limpar concluídas</button>
+    </footer>
+
+    <script src="app.js"></script>
 </body>
 </html>
