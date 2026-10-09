@@ -22,7 +22,7 @@ console.log("ClearBtn:", clearBtn);
 console.log("FilterBtns:", filterBtns); 
 */
 
-// Estado + renderização mínima
+// Bloco 2 — Estado + renderização mínima
 // ============================================
 
 // criação da array com todas as tarefas
@@ -40,6 +40,10 @@ function render() {
         empty.style.color = "var(--color-muted)";
         empty.textContent = "Nenhuma tarefa encontrada";
         list.appendChild(empty);
+    } else {    // // Loop: cria um <li> pra cada tarefa do array
+        tasks.forEach(function (task) {
+            list.appendChild(createTaskElement(task));
+        });
     }
 
 // atualizar contator de tarefas pendentes
@@ -64,7 +68,7 @@ function updateCounter() {
 // iniciar tarefa ao carregar a página
 render();
 
-// BLOCO — Adicionar tarefa
+// BLOCO 3 — Adicionar tarefa
 // ============================================
 
 // criar uma nova tarefa e adicioná-la à lista
@@ -83,10 +87,82 @@ function addTask(text) {
 }
 
 // Escuta o evento de envio do formulário
-form.addEventListener('submit', function (e) {
-    e.preventDefault(); // impede o carrgamento padrão do form
+form.addEventListener("submit", function (e) {
+    e.preventDefault(); // impede o carregamento padrão do form
 
     addTask(input.value); // adiciona a tarefa com o valor do input
-    input.value = ''; // limpa o input
+    input.value = ""; // limpa o input
     input.focus(); // coloca o cursor de volta no input
 });
+
+// BLOCO 4 — Cria e devolve um <li> completo com checkbox, texto e botão de deletar
+// ============================================
+
+// receber um objeto de tarefa
+function createTaskElement(task) {
+    const li = document.createElement("li");
+    li.className = "task-item";
+    li.dataset.id = task.ide;
+
+    if (task.completed) {
+        li.classList.add("is-completed");
+    }
+
+    // checkbox
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "task-item_checkbox";
+    checkbox.checked = task.completed;
+
+    // Texto
+    const span = document.createElement("span");
+    span.className = "task-item_text";
+    span.textContent = task.text;
+
+    // botão de deletar
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "task-item_delete";
+    deleteBtn.textContent = "🗑️";
+
+    //listener para o checkbox: alterar o estado
+    checkbox.addEventListener("change", function () {
+        toggleTask(task.id);
+    });
+    
+    // Listener do botão de deletar: remove a tarefa
+    deleteBtn.addEventListener("click", function () {
+        deleteTask(task.id);
+    });
+
+
+    // montar o <li>
+    li.appendChild(checkbox);
+    li.appendChild(span);
+    li.appendChild(deleteBtn);
+
+
+    return li;
+}
+
+
+// BLOCO 5 — Alternar concluída + Deletar
+// ============================================
+
+// Alterna o estado "completed" da tarefa com o id dado.
+function toggleTask(id) {
+    const task = tasks.find(function (t) {
+        return t.id === id;      // procura a tarefa com esse id
+    });
+    if (!task) return;         // segurança: se não achar, sai
+
+    task.completed = !task.completed;  // inverte o estado
+    render();                  // atualiza a tela
+}
+
+// Remove a tarefa com o id dado do array.
+function deleteTask(id) {
+    tasks = tasks.filter(function (t) {
+        return t.id !== id;     // mantém todas as tarefas que NÃO têm esse id
+    });
+    render();                  // atualiza a tela
+}
