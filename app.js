@@ -28,20 +28,42 @@ console.log("FilterBtns:", filterBtns);
 // criação da array com todas as tarefas
 let tasks = [];
 
+let currentFilter = "all"; //all, active, completed
+
+
+//
+function getVisibleTasks() {
+    if (currentFilter === "active")
+        return tasks.filter(t => !t.completed);
+    if (currentFilter === "completed")
+        return tasks.filter(t => t.completed);
+    return tasks;
+}
+
+function getEmptyMessage() {
+    if (currentFilter === "active")
+        return "Nenhuma tarefa ativa o!";
+    if (currentFilter === "completed")
+        return "Nenhuma tarefa concluída ainda.";
+    return "Nenhuma tarefa por aqui.";
+}
+
 // desenha a lista de tarefas na tela
 function render() {
     list.innerHTML = ''; // limpa a lista antes de renderizar
 
+    const visible = getVisibleTasks();
 
-    if (tasks.length === 0) {
+
+    if (visible.length === 0) {
         const empty = document.createElement('li');
         empty.className = "task-item";
         empty.style.justifyContent = "center";
         empty.style.color = "var(--color-muted)";
-        empty.textContent = "Nenhuma tarefa encontrada";
+        empty.textContent = getEmptyMessage();
         list.appendChild(empty);
     } else {    // // Loop: cria um <li> pra cada tarefa do array
-        tasks.forEach(function (task) {
+        visible.forEach(function (task) {
             list.appendChild(createTaskElement(task));
         });
     }
@@ -65,8 +87,6 @@ function updateCounter() {
     }
 }
 
-// iniciar tarefa ao carregar a página
-render();
 
 // BLOCO 3 — Adicionar tarefa
 // ============================================
@@ -95,6 +115,14 @@ form.addEventListener("submit", function (e) {
     input.focus(); // coloca o cursor de volta no input
 });
 
+// executar o clique do botão de filtro e chama a função setFilter
+filterBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+        setFilter(btn.dataset.filter);
+    });
+});
+
+
 // BLOCO 4 — Cria e devolve um <li> completo com checkbox, texto e botão de deletar
 // ============================================
 
@@ -102,7 +130,7 @@ form.addEventListener("submit", function (e) {
 function createTaskElement(task) {
     const li = document.createElement("li");
     li.className = "task-item";
-    li.dataset.id = task.ide;
+    li.dataset.id = task.id;
 
     if (task.completed) {
         li.classList.add("is-completed");
@@ -133,7 +161,7 @@ function createTaskElement(task) {
     deleteBtn.addEventListener("click", function () {
         deleteTask(task.id);
     });
-
+ 
 
     // montar o <li>
     li.appendChild(checkbox);
@@ -144,6 +172,14 @@ function createTaskElement(task) {
     return li;
 }
 
+// Filtar tarefas e acionar o botão roxo
+function setFilter(filter) {
+    currentFilter = filter;
+    filterBtns.forEach(function (btn) {
+        btn.classList.toggle("is-active", btn.dataset.filter === filter);
+    });
+    render();
+}
 
 // BLOCO 5 — Alternar concluída + Deletar
 // ============================================
@@ -166,3 +202,6 @@ function deleteTask(id) {
     });
     render();                  // atualiza a tela
 }
+
+// iniciar tarefa ao carregar a página
+render();
