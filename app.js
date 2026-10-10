@@ -31,7 +31,7 @@ let tasks = [];
 let currentFilter = "all"; //all, active, completed
 
 
-//
+// Devolve só as tarefas que devem aparecer com o filtro atual
 function getVisibleTasks() {
     if (currentFilter === "active")
         return tasks.filter(t => !t.completed);
@@ -42,7 +42,7 @@ function getVisibleTasks() {
 
 function getEmptyMessage() {
     if (currentFilter === "active")
-        return "Nenhuma tarefa ativa o!";
+        return "Nenhuma tarefa ativa.";
     if (currentFilter === "completed")
         return "Nenhuma tarefa concluída ainda.";
     return "Nenhuma tarefa por aqui.";
@@ -62,7 +62,8 @@ function render() {
         empty.style.color = "var(--color-muted)";
         empty.textContent = getEmptyMessage();
         list.appendChild(empty);
-    } else {    // // Loop: cria um <li> pra cada tarefa do array
+    } else {
+        // Loop: cria um <li> pra cada tarefa do array
         visible.forEach(function (task) {
             list.appendChild(createTaskElement(task));
         });
@@ -75,15 +76,15 @@ function render() {
 
 // Contar quantas tarefas NÃO estão concluídas e mostrar no rodapé
 function updateCounter() {
-    const pendingt = tasks.filter(function (t) {
+    const pending = tasks.filter(function (t) {
         return !t.completed;
     }).length;
 
     // ajustar singular e plural corretamente
-    if (pendingt === 1) {
+    if (pending === 1) {
         counter.textContent = "1 tarefa pendente";
     } else {
-        counter.textContent = pendingt + " tarefas pendentes";
+        counter.textContent = pending + " tarefas pendentes";
     }
 }
 
