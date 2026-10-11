@@ -31,6 +31,28 @@ let tasks = [];
 let currentFilter = "all"; //all, active, completed
 
 
+
+// Bloco persistência (localStorage)
+// objetivo: salvar e recuperar tarefas entre sessões
+
+const STORAGE_KEY = "todo.tasks"; // nome da chave no localStorage
+
+function saveTasks() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+}
+
+function loadTasks() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+
+    try {
+        tasks = JSON.parse(raw);
+    } catch (e) {
+        console.error("Erro ao ler tarefas salvas:", e);
+        tasks = []
+    }
+}
+
 // Devolve só as tarefas que devem aparecer com o filtro atual
 function getVisibleTasks() {
     if (currentFilter === "active")
@@ -104,6 +126,9 @@ function addTask(text) {
     };
 
     tasks.push(newTask); // adiciona a nova tarefa à array
+
+    saveTasks();
+
     render(); // atualiza a tela
 }
 
@@ -114,13 +139,6 @@ form.addEventListener("submit", function (e) {
     addTask(input.value); // adiciona a tarefa com o valor do input
     input.value = ""; // limpa o input
     input.focus(); // coloca o cursor de volta no input
-});
-
-// executar o clique do botão de filtro e chama a função setFilter
-filterBtns.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-        setFilter(btn.dataset.filter);
-    });
 });
 
 
@@ -173,12 +191,23 @@ function createTaskElement(task) {
     return li;
 }
 
-// Filtar tarefas e acionar o botão roxo
+//Filtar tarefas e acionar o botão roxo
 function setFilter(filter) {
     currentFilter = filter;
     filterBtns.forEach(function (btn) {
         btn.classList.toggle("is-active", btn.dataset.filter === filter);
     });
+    render();
+}
+
+// Limpar todas as tarefas concluídas
+function clearCompleted() {
+    tasks = tasks.filter(function (t) {
+        return !t.completed;
+    });
+
+    saveTasks();
+
     render();
 }
 
@@ -193,6 +222,9 @@ function toggleTask(id) {
     if (!task) return;         // segurança: se não achar, sai
 
     task.completed = !task.completed;  // inverte o estado
+    
+    saveTasks();
+
     render();                  // atualiza a tela
 }
 
@@ -201,8 +233,12 @@ function deleteTask(id) {
     tasks = tasks.filter(function (t) {
         return t.id !== id;     // mantém todas as tarefas que NÃO têm esse id
     });
+
+    saveTasks();
+
     render();                  // atualiza a tela
 }
 
+loadTasks();
 // iniciar tarefa ao carregar a página
 render();
