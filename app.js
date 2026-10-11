@@ -132,15 +132,6 @@ function addTask(text) {
     render(); // atualiza a tela
 }
 
-// Escuta o evento de envio do formulário
-form.addEventListener("submit", function (e) {
-    e.preventDefault(); // impede o carregamento padrão do form
-
-    addTask(input.value); // adiciona a tarefa com o valor do input
-    input.value = ""; // limpa o input
-    input.focus(); // coloca o cursor de volta no input
-});
-
 
 // BLOCO 4 — Cria e devolve um <li> completo com checkbox, texto e botão de deletar
 // ============================================
@@ -238,6 +229,28 @@ function deleteTask(id) {
 
     render();                  // atualiza a tela
 }
+
+// Escuta o evento de envio do formulário
+form.addEventListener("submit", function (e) {
+    e.preventDefault(); // impede o carregamento padrão do form
+
+    addTask(input.value); // adiciona a tarefa com o valor do input
+    input.value = ""; // limpa o input
+    input.focus(); // coloca o cursor de volta no input
+});
+
+// Escutar o evento de cada botão filtro
+filterBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+        setFilter(btn.dataset.filter);
+    });
+});
+
+// Escutar o evento do botão limpar concluidas
+clearBtn.addEventListener("click", function () {
+    clearCompleted();
+});
+
 
 loadTasks();
 // iniciar tarefa ao carregar a página
